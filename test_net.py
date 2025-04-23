@@ -44,7 +44,7 @@ from sas_det.evaluation import (
 from sas_det.checkpoint import DetectionCheckpointer
 from sas_det import add_sas_det_config
 
-#os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
+
 import torch.multiprocessing
 torch.multiprocessing.set_sharing_strategy('file_system')
 
@@ -152,7 +152,6 @@ def setup(args):
 def main(args):
     cfg = setup(args)
 
-    assert args.eval_only, "This release supports evaluation only."
     if args.eval_only:
         model = Trainer.build_model(cfg)
         DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
@@ -170,6 +169,19 @@ def main(args):
         if comm.is_main_process():
             verify_results(cfg, res)
         return res
+    #training code
+    else:
+        trainer = Trainer(cfg)
+        trainer.resume_or_load(resume=args.resume)
+        if cfg.TEST.AUG.ENABLED:
+            trainer.register_hooks(
+                [hooks.EvalHook(0, lambda: trainer.test_with_TTA(cfg, trainer.model))]
+            )
+        if cfg.MODEL.OVD.USE_PERIODIC_UPDATE:
+            trainer.register_hooks(
+                [hooks.CallbackHook(after_step=lambda self: periodic_update_teacher(trainer))]
+            )
+        return trainer.train()
 
 
 if __name__ == "__main__":
