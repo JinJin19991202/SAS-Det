@@ -2,37 +2,6 @@
 [arXiv](https://arxiv.org/abs/2308.06412)
 
 
-## Installation
-- Our project is developed on Detectron2. Please follow the official installation [instructions](https://github.com/facebookresearch/detectron2/blob/main/INSTALL.md), OR the following instructions.
-```
-# create new environment
-conda create -n sas_det python=3.8
-conda activate sas_det
-
-# install pytorch
-conda install pytorch==1.12.0 torchvision==0.13.0 torchaudio==0.12.0 cudatoolkit=11.3 -c pytorch
-
-# install Detectron2 from a local clone
-git clone https://github.com/facebookresearch/detectron2.git
-python -m pip install -e detectron2
-```
-
-- Install CLIP
-```
-# install CLIP
-pip install scipy
-pip install ftfy regex tqdm
-pip install git+https://github.com/openai/CLIP.git
-```
-
-
-## Datasets
-
-- Please follow RegionCLIP's [dataset instructions](https://github.com/microsoft/RegionCLIP/blob/main/datasets/README.md) to prepare COCO and LVIS datasets.
-
-- Download and put [metadata](https://drive.google.com/drive/u/1/folders/1R72q0Wg26-PQGqbaK3P3pT2vmGm9uzKU) for datasets in the folder `datasets` (i.e., `$DETECTRON2_DATASETS` used in the last step), which will be used in our evaluation and training.
-
-
 ## Download pretrained weights
 - Download various [RegionCLIP's pretrained weights](https://drive.google.com/drive/folders/1hzrJBvcCrahoRcqJRqzkIGFO_HUSJIii). Check [here](https://github.com/microsoft/RegionCLIP/blob/main/docs/MODEL_ZOO.md#model-downloading) for more details.
 Create a new folder `pretrained_ckpt` to put those weights. In this repository, `regionclip`, `concept_emb` and `rpn` will be used.
@@ -69,14 +38,17 @@ Our pretrained weights includes:
 
 <details>
 <summary>
-
+<details>
+<summary>
+training with command as the script,
+</summary>
   
 ```bash
 python3 ./test_net.py \
     --num-gpus 8 \
     --eval-only \
     --config-file ./sas_det/configs/ovd_coco_R50_C4_ensemble_PLs.yaml \
-    MODEL.WEIGHTS ./pretrained_ckpt/sas_det/pretrain_r50_cc.pth \
+    MODEL.WEIGHTS ./pretrained_ckpt/sas_det/regionclip_pretrained-cc_r50.pth \
     MODEL.CLIP.OFFLINE_RPN_CONFIG ./sas_det/configs/regionclip/COCO-InstanceSegmentation/mask_rcnn_R_50_C4_1x_ovd_FSD.yaml \
     MODEL.CLIP.BB_RPN_WEIGHTS ./pretrained_ckpt/rpn/rpn_coco_48.pth \
     MODEL.CLIP.TEXT_EMB_PATH ./pretrained_ckpt/concept_emb/coco_48_base_cls_emb.pth \
