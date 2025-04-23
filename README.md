@@ -36,8 +36,7 @@ Our pretrained weights includes:
 </tr>
 </tbody></table>
 
-<details>
-<summary>
+
 <details>
 <summary>
 training with command as the script,
@@ -46,7 +45,6 @@ training with command as the script,
 ```bash
 python3 ./test_net.py \
     --num-gpus 8 \
-    --eval-only \
     --config-file ./sas_det/configs/ovd_coco_R50_C4_ensemble_PLs.yaml \
     MODEL.WEIGHTS ./pretrained_ckpt/sas_det/regionclip_pretrained-cc_r50.pth \
     MODEL.CLIP.OFFLINE_RPN_CONFIG ./sas_det/configs/regionclip/COCO-InstanceSegmentation/mask_rcnn_R_50_C4_1x_ovd_FSD.yaml \
