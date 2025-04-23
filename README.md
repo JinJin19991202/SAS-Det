@@ -1,8 +1,4 @@
-# Taming Self-Training for Open-Vocabulary Object Detection
-
-Official implementation of online self-training and a split-and-fusion (SAF) head for Open-Vocabulary Object Detection (OVD), SAS-Det for short.
-This project was named as Improving Pseudo Labels for Open-Vocabulary Object Detection.
-
+# Taming Self-Training for Open-Vocabulary Object Detection（CVPR2024）
 [arXiv](https://arxiv.org/abs/2308.06412)
 
 
@@ -73,35 +69,14 @@ Our pretrained weights includes:
 
 <details>
 <summary>
-Evaluation without the SAF Head (baseline in the paper),
-</summary>
-  
-```bash
-python3 ./test_net.py \
-    --num-gpus 8 \
-    --eval-only \
-    --config-file ./sas_det/configs/regionclip/COCO-InstanceSegmentation/customized/CLIP_fast_rcnn_R_50_C4_ovd_PLs.yaml \
-    MODEL.WEIGHTS ./pretrained_ckpt/sas_det/sas_det_coco_no_saf_head_baseline.pth \
-    MODEL.CLIP.OFFLINE_RPN_CONFIG ./sas_det/configs/regionclip/COCO-InstanceSegmentation/mask_rcnn_R_50_C4_1x_ovd_FSD.yaml \
-    MODEL.CLIP.BB_RPN_WEIGHTS ./pretrained_ckpt/rpn/rpn_coco_48.pth \
-    MODEL.CLIP.TEXT_EMB_PATH ./pretrained_ckpt/concept_emb/coco_65_cls_emb.pth \
-    MODEL.CLIP.OPENSET_TEST_TEXT_EMB_PATH ./pretrained_ckpt/concept_emb/coco_65_cls_emb.pth \
-    MODEL.ROI_HEADS.SOFT_NMS_ENABLED True \
-    OUTPUT_DIR output/eval
-```
-</details>
 
-<details>
-<summary>
-Evaluation with the SAF Head,
-</summary>
   
 ```bash
 python3 ./test_net.py \
     --num-gpus 8 \
     --eval-only \
     --config-file ./sas_det/configs/ovd_coco_R50_C4_ensemble_PLs.yaml \
-    MODEL.WEIGHTS ./pretrained_ckpt/sas_det/sas_det_coco.pth \
+    MODEL.WEIGHTS ./pretrained_ckpt/sas_det/pretrain_r50_cc.pth \
     MODEL.CLIP.OFFLINE_RPN_CONFIG ./sas_det/configs/regionclip/COCO-InstanceSegmentation/mask_rcnn_R_50_C4_1x_ovd_FSD.yaml \
     MODEL.CLIP.BB_RPN_WEIGHTS ./pretrained_ckpt/rpn/rpn_coco_48.pth \
     MODEL.CLIP.TEXT_EMB_PATH ./pretrained_ckpt/concept_emb/coco_48_base_cls_emb.pth \
