@@ -57,6 +57,54 @@ python3 ./test_net.py \
     MODEL.ENSEMBLE.ALPHA 0.3 MODEL.ENSEMBLE.BETA 0.7 \
     OUTPUT_DIR output/eval
 ```
+The results as follow:
+[04/23 13:37:09] d2.evaluation.coco_evaluation INFO: Evaluation results for bbox: 
+|   AP   |  AP50  |  AP75  |  APs   |  APm   |  APl   |
+|:------:|:------:|:------:|:------:|:------:|:------:|
+| 26.058 | 46.097 | 26.460 | 12.245 | 29.723 | 34.989 |
+[04/23 13:37:09] d2.evaluation.coco_evaluation INFO: AP50_split_target AP: 0.3352322717304836
+[04/23 13:37:09] d2.evaluation.coco_evaluation INFO: AP50_split_base AP: 0.5055024639541386
+[04/23 13:37:09] d2.evaluation.coco_evaluation INFO: AP50_split_all AP: 0.4609702598341058
+But when use trained got weights the results as follow:
+[04/29 03:40:01] d2.evaluation.coco_evaluation INFO: Evaluation results for bbox: 
+|  AP   |  AP50  |  AP75  |  APs  |  APm  |  APl  |
+|:-----:|:------:|:------:|:-----:|:-----:|:-----:|
+| 0.001 | 0.005  | 0.000  | 0.001 | 0.002 | 0.001 |
+[04/29 03:40:01] d2.evaluation.coco_evaluation INFO: AP50_split_target AP: 1.0296307861183674e-05
+[04/29 03:40:01] d2.evaluation.coco_evaluation INFO: AP50_split_base AP: 6.508518913363607e-05
+[04/29 03:40:01] d2.evaluation.coco_evaluation INFO: AP50_split_all AP: 5.075578941622544e-05
+[04/29 03:40:01] d2.evaluation.coco_evaluation INFO: Per-category bbox AP: 
+| category   | AP    | category   | AP    | category     | AP    |
+|:-----------|:------|:-----------|:------|:-------------|:------|
+| person     | 0.050 | bicycle    | 0.000 | car          | 0.000 |
+| motorcycle | 0.000 | airplane   | 0.000 | bus          | 0.000 |
+| train      | 0.000 | truck      | 0.000 | boat         | 0.000 |
+| bench      | 0.000 | bird       | 0.000 | cat          | 0.000 |
+| dog        | 0.002 | horse      | 0.000 | sheep        | 0.000 |
+| cow        | 0.000 | elephant   | 0.000 | bear         | 0.000 |
+| zebra      | 0.000 | giraffe    | 0.000 | backpack     | 0.000 |
+| umbrella   | 0.000 | handbag    | 0.000 | tie          | 0.000 |
+| suitcase   | 0.000 | frisbee    | 0.000 | skis         | 0.000 |
+| snowboard  | 0.000 | kite       | 0.000 | skateboard   | 0.000 |
+| surfboard  | 0.000 | bottle     | 0.000 | cup          | 0.000 |
+| fork       | 0.000 | knife      | 0.000 | spoon        | 0.000 |
+| bowl       | 0.000 | banana     | 0.000 | apple        | 0.000 |
+| sandwich   | 0.000 | orange     | 0.000 | broccoli     | 0.000 |
+| carrot     | 0.000 | pizza      | 0.000 | donut        | 0.000 |
+| cake       | 0.000 | chair      | 0.018 | couch        | 0.000 |
+| bed        | 0.000 | toilet     | 0.000 | tv           | 0.000 |
+| laptop     | 0.000 | mouse      | 0.000 | remote       | 0.005 |
+| keyboard   | 0.000 | microwave  | 0.000 | oven         | 0.000 |
+| toaster    | 0.000 | sink       | 0.000 | refrigerator | 0.000 |
+| book       | 0.000 | clock      | 0.000 | vase         | 0.000 |
+| scissors   | 0.000 | toothbrush | 0.000 |              |       |
+[04/29 03:40:01] d2.evaluation.coco_evaluation INFO: avg inst: 100.0000 (4836 images)
+[04/29 03:40:01] d2.engine.defaults INFO: Evaluation results for coco_2017_ovd_all_test in csv format:
+[04/29 03:40:01] d2.evaluation.testing INFO: copypaste: Task: bbox
+[04/29 03:40:01] d2.evaluation.testing INFO: copypaste: AP,AP50,AP75,APs,APm,APl,AP50_split_target,AP50_split_base,AP50_split_all
+[04/29 03:40:01] d2.evaluation.testing INFO: copypaste: 0.0012,0.0051,0.0001,0.0007,0.0023,0.0009,0.0000,0.0001,0.0001
+
+The code maybe somewhere use wrong trick, but I don't have method to deal with it.
 </details>
 
 
