@@ -39,6 +39,7 @@ class EnsembleCLIPRes5ROIHeads(CLIPRes5ROIHeads):
         self,
         *,
         text_box_head: nn.Module = None,
+        only_sample_fg_proposals: bool = False,
         # use_offline_pl = False,
         **kwargs,
     ):
@@ -48,11 +49,12 @@ class EnsembleCLIPRes5ROIHeads(CLIPRes5ROIHeads):
 
         # will do box reg on this head. image head comes from attnpool in CLIP
         self.text_box_head = text_box_head
+        self.only_sample_fg_proposals = only_sample_fg_proposals
 
     @classmethod
     def from_config(cls, cfg, input_shape):
         ret = super().from_config(cfg, input_shape)
-        
+
         in_features = ret["in_features"]
         # If EnsembleCLIPRes5ROIHeads is applied on multiple feature maps (as in FPN),
         # then we share the same predictors and therefore the channel counts must be the same
@@ -109,6 +111,7 @@ class EnsembleCLIPRes5ROIHeads(CLIPRes5ROIHeads):
             'box_predictor': box_predictor,
             #
             'text_box_head': text_box_head,
+            'only_sample_fg_proposals': cfg.MODEL.ROI_HEADS.get("ONLY_SAMPLE_FG_PROPOSALS", False),
             # 'base_cat_ids': base_cat_ids,
             # 'use_offline_pl': cfg.MODEL.ENSEMBLE.USE_OFFLINE_PL,
         })
@@ -156,13 +159,13 @@ class EnsembleCLIPRes5ROIHeads(CLIPRes5ROIHeads):
             gt_classes = torch.zeros_like(matched_idxs) + bg_label
 
         # only sample fg proposals to train recognition branch (ref to subsample_labels)
-        if self.only_sample_fg_proposals:
+        if getattr(self, "only_sample_fg_proposals", False):  # Use getattr for safety
             if has_gt:
                 positive = nonzero_tuple((gt_classes != -1) & (gt_classes != bg_label))[0]
                 num_pos = int(self.batch_size_per_image * self.positive_fraction)
-                # protect against not enough positive examples
+            # protect against not enough positive examples
                 num_pos = min(positive.numel(), num_pos)
-                # randomly select positive and negative examples
+            # randomly select positive and negative examples
                 perm1 = torch.randperm(positive.numel(), device=positive.device)[:num_pos]
                 sampled_idxs = positive[perm1]
             else:  # no gt, only keep 1 bg proposal to fill the slot
@@ -171,7 +174,7 @@ class EnsembleCLIPRes5ROIHeads(CLIPRes5ROIHeads):
 
         sampled_fg_idxs, sampled_bg_idxs = subsample_labels(
             gt_classes, self.batch_size_per_image, self.positive_fraction, bg_label
-        )
+    )
 
         sampled_idxs = torch.cat([sampled_fg_idxs, sampled_bg_idxs], dim=0)
         return sampled_idxs, gt_classes[sampled_idxs]
