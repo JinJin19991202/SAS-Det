@@ -14,33 +14,8 @@ Our pretrained weights includes:
 ## Evaluation with released weights
 
 ### Results on COCO-OVD
-<table><tbody>
-<!-- START TABLE -->
-<!-- TABLE HEADER -->
-<th valign="bottom">Configs</th>
-<th valign="bottom">Novel AP</th>
-<th valign="bottom">Base AP</th>
-<th valign="bottom">Overall AP</th>
-<!-- TABLE BODY -->
-<!-- ROW: with LSJ -->
- <tr><td align="left"><a href="./sas_det/configs/regionclip/COCO-InstanceSegmentation/customized/CLIP_fast_rcnn_R_50_C4_ovd_PLs.yaml">w/o SAF head</a></td>
-<td align="center">31.4</td>
-<td align="center">55.7</td>
-<td align="center">49.4</td>
-</tr>
-<!-- ROW: with out LSJ -->
- <tr><td align="left"><a href="./sas_det/configs/ovd_coco_R50_C4_ensemble_PLs.yaml">with SAF head</a></td>
-<td align="center">37.4</td>
-<td align="center">58.5</td>
-<td align="center">53.0</td>
-</tr>
-</tbody></table>
 
-
-<details>
-<summary>
 training with command as the script,
-</summary>
   
 ```bash
 python3 ./test_net.py \
@@ -111,34 +86,10 @@ But when use trained got weights the results as follow:
 [04/29 03:40:01] d2.evaluation.testing INFO: copypaste: 0.0012,0.0051,0.0001,0.0007,0.0023,0.0009,0.0000,0.0001,0.0001
 
 The code maybe somewhere use wrong trick, but I don't have method to deal with it.
-</details>
 
 
 ### Results on LVIS-OVD
-<table><tbody>
-<!-- START TABLE -->
-<!-- TABLE HEADER -->
-<th valign="bottom">Configs</th>
-<th valign="bottom">APr</th>
-<th valign="bottom">APc</th>
-<th valign="bottom">APf</th>
-<th valign="bottom">AP</th>
-<!-- TABLE BODY -->
-<!-- ROW: with LSJ -->
- <tr><td align="left"><a href="./sas_det/configs/ovd_lvis_R50_C4_ensemble_PLs.yaml">RN50-C4 as backbone</a></td>
-<td align="center">20.1</td>
-<td align="center">27.1</td>
-<td align="center">32.9</td>
-<td align="center">28.1</td>
-</tr>
-<!-- ROW: with out LSJ -->
- <tr><td align="left"><a href="./sas_det/configs/ovd_lvis_R50_C4_ensemble_PLs.yaml">RN50x4-C4 as backbone</a></td>
-<td align="center">29.0</td>
-<td align="center">32.3</td>
-<td align="center">36.8</td>
-<td align="center">33.5</td>
-</tr>
-</tbody></table>
+
 
 <details>
 <summary>
@@ -161,6 +112,18 @@ python3 ./test_net.py \
     MODEL.ENSEMBLE.ALPHA 0.33 MODEL.ENSEMBLE.BETA 0.67 \
     OUTPUT_DIR output/eval
 ```
+[04/25 15:35:00] d2.evaluation.lvis INFO: Saving results to output/lvis/inference/lvis_instances_results.json
+[04/25 15:35:26] d2.evaluation.lvis INFO: Evaluating predictions ...
+[04/25 15:43:52] d2.evaluation.lvis INFO: avg inst: 293.0994 (19809 images)
+[04/25 15:43:57] d2.engine.defaults INFO: Evaluation results for lvis_v1_val in csv format:
+[04/25 15:43:57] d2.evaluation.testing INFO: copypaste: Task: bbox
+[04/25 15:43:57] d2.evaluation.testing INFO: copypaste: AP,AP50,AP75,APs,APm,APl,APr,APc,APf
+[04/25 15:43:57] d2.evaluation.testing INFO: copypaste: 0.0804,0.2692,0.0181,0.0347,0.1879,0.0626,0.1986,0.0659,0.0448
+
+I follow paper and original setting to trained on the LVIS dataset, but always got this results, maybe .....
+
+
+
 </details>
 
 <details>
