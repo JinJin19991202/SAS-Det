@@ -23,11 +23,11 @@ from collections import OrderedDict
 import torch
 
 import detectron2.utils.comm as comm
-# from detectron2.checkpoint import DetectionCheckpointer
+from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.config import get_cfg
 from detectron2.data import MetadataCatalog, build_detection_train_loader
 from detectron2.engine import default_argument_parser, default_setup, hooks, launch
-from detectron2.engine import DefaultTrainer    # this may be modified by regionclip
+from detectron2.engine import DefaultTrainer
 from detectron2.modeling import GeneralizedRCNNWithTTA
 
 from sas_det.evaluation import (
@@ -140,36 +140,47 @@ def setup(args):
     Create configs and perform basic setups.
     """
     cfg = get_cfg()
-    add_sas_det_config(cfg)  # sas_det configs
-
+    add_sas_det_config(cfg) 
+    cfg.set_new_allowed(True) 
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
     cfg.freeze()
     default_setup(cfg, args)
+    print("Loaded configuration:")
+    print(cfg)
     return cfg
 
 
 def main(args):
     cfg = setup(args)
-
     if args.eval_only:
         model = Trainer.build_model(cfg)
+
+        model_to_use = model.module if isinstance(model, torch.nn.parallel.DistributedDataParallel) else model
+
         DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
             cfg.MODEL.WEIGHTS, resume=args.resume
         )
-        if cfg.MODEL.META_ARCHITECTURE in ['CLIPRCNN', 'CLIPFastRCNN', 'PretrainFastRCNN', 'WeakPretrainFastRCNN'] \
-            and cfg.MODEL.CLIP.BB_RPN_WEIGHTS is not None\
-            and cfg.MODEL.CLIP.CROP_REGION_TYPE == 'RPN': # load 2nd pretrained model
+        if cfg.MODEL.META_ARCHITECTURE in [
+            'CLIPRCNN', 'CLIPFastRCNN', 'PretrainFastRCNN', 'WeakPretrainFastRCNN'
+        ] and cfg.MODEL.CLIP.BB_RPN_WEIGHTS is not None \
+           and cfg.MODEL.CLIP.CROP_REGION_TYPE == 'RPN':
             DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR, bb_rpn_weights=True).resume_or_load(
                 cfg.MODEL.CLIP.BB_RPN_WEIGHTS, resume=False
             )
+        if hasattr(model_to_use, "use_ensemble_eval") and model_to_use.use_ensemble_eval:
+            if not getattr(model_to_use, "is_teacher_init", False):
+                model_to_use._create_ovd_teacher()
+                model_to_use.is_teacher_init = True
+
+        model.eval()
         res = Trainer.test(cfg, model)
         if cfg.TEST.AUG.ENABLED:
             res.update(Trainer.test_with_TTA(cfg, model))
         if comm.is_main_process():
             verify_results(cfg, res)
+
         return res
-    #training code
     else:
         trainer = Trainer(cfg)
         trainer.resume_or_load(resume=args.resume)
