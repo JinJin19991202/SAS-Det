@@ -65,6 +65,12 @@ The results as follow:
 [04/23 13:37:09] d2.evaluation.coco_evaluation INFO: AP50_split_target AP: 0.3352322717304836
 [04/23 13:37:09] d2.evaluation.coco_evaluation INFO: AP50_split_base AP: 0.5055024639541386
 [04/23 13:37:09] d2.evaluation.coco_evaluation INFO: AP50_split_all AP: 0.4609702598341058
+
+
+
+
+
+
 But when use trained got weights the results as follow:
 [04/29 03:40:01] d2.evaluation.coco_evaluation INFO: Evaluation results for bbox: 
 |  AP   |  AP50  |  AP75  |  APs  |  APm  |  APl  |
